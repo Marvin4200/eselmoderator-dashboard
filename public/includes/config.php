@@ -192,12 +192,15 @@ function dashboardSelectedGuildId($guilds = []) {
     foreach ($guilds as $g) {
         if (!empty($g['id'])) $validIds[$g['id']] = true;
     }
-    if ($requested !== '' && (empty($validIds) || isset($validIds[$requested]))) {
+    // Kein "empty($validIds) || ..."-Fallback mehr -- das akzeptierte frueher JEDE
+    // beliebige Guild-ID, sobald die Discord-Guild-Liste aus irgendeinem Grund leer war
+    // (z.B. ein fehlgeschlagener Token-Refresh), komplett ohne Zugehoerigkeitspruefung.
+    if ($requested !== '' && isset($validIds[$requested])) {
         $_SESSION['selected_guild_id'] = $requested;
         return $requested;
     }
     $saved = trim($_SESSION['selected_guild_id'] ?? '');
-    if ($saved !== '' && (empty($validIds) || isset($validIds[$saved]))) {
+    if ($saved !== '' && isset($validIds[$saved])) {
         return $saved;
     }
     if (!empty($guilds[0]['id'])) {
@@ -305,16 +308,27 @@ function guildHasBot($guildId) {
 
 $GLOBALS['BOT_REQUIRED_PAGES'] = [
     'portal', 'modules', 'moderation', 'automod', 'welcome', 'reaction-roles',
-    'leveling', 'temp-voice', 'tickets',
+    'leveling', 'temp-voice', 'tickets', 'social', 'freegames', 'server-backup',
+    'premium-info',
 ];
 
 function requireBotOnGuild() {
-    if (isAdmin()) return;
     if (!isLoggedIn()) return;
     $page = currentPage();
     if (!in_array($page, $GLOBALS['BOT_REQUIRED_PAGES'], true)) return;
     $guildId = trim($_GET['guildId'] ?? ($_SESSION['selected_guild_id'] ?? ''));
     if ($guildId === '') return;
+
+    // Zugriffskontrolle: nur der Owner oder wer auf DIESEM Server Discord-seitig
+    // Administrator/"Server verwalten" hat, darf die Modul-Seiten dieses Servers ueberhaupt
+    // sehen. Ohne diese Pruefung koennte jedes normale Mitglied eines Servers, auf dem
+    // EselModerator laeuft, per ?guildId=<fremde-id> dessen Moderation/AutoMod/Tickets/etc.
+    // lesen und aendern -- die einzelnen Seiten selbst pruefen das nirgends nach.
+    if (!isOwner() && !isServerAdmin($guildId)) {
+        http_response_code(403);
+        exit('Kein Zugriff auf diesen Server.');
+    }
+
     if (guildHasBot($guildId)) return;
     $_SESSION['selected_guild_id'] = $guildId;
     if (!headers_sent()) {
