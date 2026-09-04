@@ -12,6 +12,8 @@ function __navIcon($name) {
         'trend' => '<polyline points="3 17 9 11 13 15 21 6"/><polyline points="14 6 21 6 21 13"/>',
         'volume' => '<polygon points="4 9 8 9 12 5 12 19 8 15 4 15 4 9"/><path d="M16 8a5 5 0 0 1 0 8"/>',
         'ticket' => '<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8Z"/>',
+        'broadcast' => '<circle cx="12" cy="12" r="2"/><path d="M8.5 8.5a5 5 0 0 0 0 7"/><path d="M15.5 8.5a5 5 0 0 0 0 7"/><path d="M5.5 5.5a9 9 0 0 0 0 13"/><path d="M18.5 5.5a9 9 0 0 0 0 13"/>',
+        'gift' => '<rect x="3" y="9" width="18" height="12" rx="1"/><path d="M3 9v12"/><path d="M12 9v12"/><path d="M12 9c-1.5-4-6-4.5-6-1.5S9 9 12 9Z"/><path d="M12 9c1.5-4 6-4.5 6-1.5S15 9 12 9Z"/>',
         'star' => '<polygon points="12 2 15.1 8.6 22 9.3 17 14.1 18.2 21 12 17.6 5.8 21 7 14.1 2 9.3 8.9 8.6 12 2"/>',
     ];
     $path = $icons[$name] ?? '';
@@ -28,6 +30,8 @@ $__navItems = [
     ['page' => 'leveling', 'label' => 'Leveling', 'icon' => 'trend'],
     ['page' => 'temp-voice', 'label' => 'Temp-Voice', 'icon' => 'volume'],
     ['page' => 'tickets', 'label' => 'Tickets', 'icon' => 'ticket'],
+    ['page' => 'social', 'label' => 'Social Alerts', 'icon' => 'broadcast'],
+    ['page' => 'freegames', 'label' => 'Freegames', 'icon' => 'gift'],
 ];
 ?>
 <aside class="sidebar">

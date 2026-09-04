@@ -19,6 +19,11 @@ if ($botInGuild) {
     if (!empty($modulesResp['success'])) $modulesData = $modulesResp['data'];
     $premiumResp = getAPI('/guilds/' . urlencode($guildId) . '/premium');
     if (!empty($premiumResp['success'])) $premiumData = $premiumResp['data'];
+
+    $freegamesResp = getAPI('/guilds/' . urlencode($guildId) . '/freegames');
+    if (!empty($freegamesResp['success']) && $modulesData) {
+        $modulesData['modules']['freeGames'] = !empty($freegamesResp['data']['freeGames']['enabled']);
+    }
 }
 
 $moduleHubLinks = [
@@ -29,6 +34,8 @@ $moduleHubLinks = [
     ['key' => 'leveling', 'page' => 'leveling', 'label' => 'Leveling', 'icon' => 'trend', 'desc' => 'XP & Rangliste'],
     ['key' => 'tempVoice', 'page' => 'temp-voice', 'label' => 'Temp-Voice', 'icon' => 'volume', 'desc' => 'Private Sprachkanäle'],
     ['key' => 'tickets', 'page' => 'tickets', 'label' => 'Tickets', 'icon' => 'ticket', 'desc' => 'Support-System'],
+    ['key' => 'social', 'page' => 'social', 'label' => 'Social Alerts', 'icon' => 'broadcast', 'desc' => 'Twitch/YouTube/RSS'],
+    ['key' => 'freeGames', 'page' => 'freegames', 'label' => 'Freegames', 'icon' => 'gift', 'desc' => 'Kostenlose Spiele-Deals'],
 ];
 
 include __DIR__ . '/../includes/header.php';
