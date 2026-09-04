@@ -102,6 +102,21 @@ $__u = getUser();
     </div>
     <a class="btn" href="<?= dashboardPageUrl('modules') ?>">Module verwalten</a>
   </div>
+
+  <div class="card">
+    <h2>Tools</h2>
+    <div class="grid">
+      <a class="stat interactive" style="text-decoration:none;color:inherit;display:flex;gap:14px;align-items:flex-start;" href="<?= dashboardPageUrl('server-backup') ?>">
+        <span style="width:38px;height:38px;border-radius:11px;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;">
+          <?= __navIcon('archive') ?>
+        </span>
+        <span>
+          <span style="display:block;font-weight:700;color:#fff;font-size:.94rem;">Server-Backup</span>
+          <span style="display:block;color:var(--text-tertiary);font-size:.78rem;margin-top:2px;">Struktur sichern & wiederherstellen</span>
+        </span>
+      </a>
+    </div>
+  </div>
 <?php endif; ?>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
