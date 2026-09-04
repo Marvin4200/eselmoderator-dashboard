@@ -87,25 +87,70 @@ $loginUrl = 'https://discord.com/api/oauth2/authorize?' . http_build_query([
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EselModerator Dashboard – Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { color-scheme: dark; }
-  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
-         background:#0d0d1a; color:#e0e0e0; font-family:'Segoe UI',sans-serif; }
-  .card { background:#1a1a2e; border:1px solid #2a2a45; border-radius:14px; padding:40px 36px;
-          text-align:center; max-width:360px; box-shadow:0 10px 30px rgba(0,0,0,.4); }
-  .card h1 { margin:0 0 8px; font-size:1.4rem; color:#fff; }
-  .card p { color:#999; font-size:.9rem; margin:0 0 24px; line-height:1.5; }
-  .login-btn { display:inline-flex; align-items:center; gap:10px; background:#5865F2; color:#fff;
-               text-decoration:none; font-weight:600; padding:12px 22px; border-radius:8px;
-               transition:background .15s; }
-  .login-btn:hover { background:#4752c4; }
+  :root {
+    color-scheme: dark;
+    --accent-1: #7c5cff; --accent-2: #4f8bff; --accent-3: #38d0ff;
+    --accent-grad: linear-gradient(120deg, var(--accent-1), var(--accent-2));
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:#08080f; color:#f4f4f8; font-family:'Inter','Segoe UI',sans-serif;
+    position: relative; overflow: hidden;
+  }
+  body::before {
+    content:""; position:fixed; inset:0; pointer-events:none;
+    background:
+      radial-gradient(650px 500px at 15% 15%, rgba(124,92,255,.24), transparent 60%),
+      radial-gradient(650px 550px at 85% 85%, rgba(56,208,255,.16), transparent 60%),
+      radial-gradient(500px 400px at 85% 15%, rgba(79,139,255,.14), transparent 60%);
+    animation: drift 16s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    from { transform: scale(1) translate(0,0); }
+    to { transform: scale(1.08) translate(-1%, 1%); }
+  }
+  .card {
+    position: relative; z-index: 1;
+    background: rgba(18,18,30,.75);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border:1px solid rgba(255,255,255,.1); border-radius:24px; padding:48px 40px;
+    text-align:center; max-width:380px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.6);
+    animation: rise .5s cubic-bezier(.16,1,.3,1);
+  }
+  @keyframes rise { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+  .badge {
+    width:56px; height:56px; border-radius:16px; margin:0 auto 20px;
+    background: var(--accent-grad); display:flex; align-items:center; justify-content:center;
+    font-size:1.7rem; box-shadow: 0 8px 30px -6px rgba(124,92,255,.5);
+  }
+  .card h1 { margin:0 0 8px; font-size:1.5rem; font-weight:800; letter-spacing:-.02em; color:#fff; }
+  .card p { color:#9a9ab0; font-size:.92rem; margin:0 0 28px; line-height:1.6; }
+  .login-btn {
+    display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%;
+    background:#5865F2; color:#fff; text-decoration:none; font-weight:700; font-size:.95rem;
+    padding:14px 22px; border-radius:999px; transition: transform .15s, box-shadow .15s, filter .15s;
+    box-shadow: 0 6px 20px -6px rgba(88,101,242,.6);
+  }
+  .login-btn:hover { transform: translateY(-1px); filter: brightness(1.08); box-shadow: 0 10px 28px -6px rgba(88,101,242,.7); }
+  .footer-note { position:relative; z-index:1; margin-top:22px; color:#6b6b82; font-size:.78rem; text-align:center; }
 </style>
 </head>
 <body>
   <div class="card">
-    <h1>🤖 EselModerator</h1>
+    <div class="badge">🤖</div>
+    <h1>EselModerator</h1>
     <p>Melde dich mit Discord an, um deine Server zu verwalten.</p>
-    <a class="login-btn" href="<?= esc($loginUrl) ?>">Mit Discord einloggen</a>
+    <a class="login-btn" href="<?= esc($loginUrl) ?>">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4.4A19.7 19.7 0 0 0 15.6 3l-.3.5a13.9 13.9 0 0 1 4 1.4 15.8 15.8 0 0 0-15 0 13 13 0 0 1 4.1-1.4L8 3a19.5 19.5 0 0 0-4.7 1.4C1 9 .3 13.5.6 18a20 20 0 0 0 5.9 3l1-1.5a12.8 12.8 0 0 1-2-1l.5-.4a14.4 14.4 0 0 0 12 0l.5.4a12.8 12.8 0 0 1-2 1l1 1.5a19.9 19.9 0 0 0 5.9-3c.4-5.2-.9-9.6-3.1-13.6ZM8.5 15.3c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.9.9 1.8 2c0 1.1-.8 2-1.8 2Zm7 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.9.9 1.8 2c0 1.1-.8 2-1.8 2Z"/></svg>
+      Mit Discord einloggen
+    </a>
   </div>
+  <p class="footer-note">EselModerator · Teil der Eselbande</p>
 </body>
 </html>

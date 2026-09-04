@@ -8,6 +8,9 @@ $manageableGuilds = array_values(array_filter($guilds, function ($g) {
 }));
 $guildId = dashboardSelectedGuildId($manageableGuilds);
 
+$currentGuild = null;
+foreach ($manageableGuilds as $g) if ($g['id'] === $guildId) { $currentGuild = $g; break; }
+
 $modulesData = null;
 $premiumData = null;
 $botInGuild = $guildId !== '' && guildHasBot($guildId);
@@ -19,39 +22,57 @@ if ($botInGuild) {
 }
 
 $moduleHubLinks = [
-    ['key' => 'moderation', 'page' => 'moderation', 'label' => 'Moderation', 'icon' => '🛡️'],
-    ['key' => 'automod', 'page' => 'automod', 'label' => 'AutoMod', 'icon' => '🚫'],
-    ['key' => 'welcome', 'page' => 'welcome', 'label' => 'Willkommen', 'icon' => '👋'],
-    ['key' => 'reactionRoles', 'page' => 'reaction-roles', 'label' => 'Reaction-Roles', 'icon' => '🎭'],
-    ['key' => 'leveling', 'page' => 'leveling', 'label' => 'Leveling', 'icon' => '📈'],
-    ['key' => 'tempVoice', 'page' => 'temp-voice', 'label' => 'Temp-Voice', 'icon' => '🔊'],
-    ['key' => 'tickets', 'page' => 'tickets', 'label' => 'Tickets', 'icon' => '🎫'],
+    ['key' => 'moderation', 'page' => 'moderation', 'label' => 'Moderation', 'icon' => 'shield', 'desc' => 'Warn, Timeout, Kick, Ban'],
+    ['key' => 'automod', 'page' => 'automod', 'label' => 'AutoMod', 'icon' => 'ban', 'desc' => 'Spam, Invites, Begriffe'],
+    ['key' => 'welcome', 'page' => 'welcome', 'label' => 'Willkommen', 'icon' => 'wave', 'desc' => 'Begrüßung & Autorolle'],
+    ['key' => 'reactionRoles', 'page' => 'reaction-roles', 'label' => 'Reaction-Roles', 'icon' => 'smile', 'desc' => 'Rollen per Klick'],
+    ['key' => 'leveling', 'page' => 'leveling', 'label' => 'Leveling', 'icon' => 'trend', 'desc' => 'XP & Rangliste'],
+    ['key' => 'tempVoice', 'page' => 'temp-voice', 'label' => 'Temp-Voice', 'icon' => 'volume', 'desc' => 'Private Sprachkanäle'],
+    ['key' => 'tickets', 'page' => 'tickets', 'label' => 'Tickets', 'icon' => 'ticket', 'desc' => 'Support-System'],
 ];
 
 include __DIR__ . '/../includes/header.php';
 include __DIR__ . '/../includes/sidebar.php';
+
+$__u = getUser();
 ?>
-<h1>Übersicht</h1>
+<h1>Willkommen zurück, <?= esc($__u['username'] ?? '') ?> <span style="font-size:1.3rem;">👋</span></h1>
+<p class="subtitle"><?= $currentGuild ? 'Du verwaltest gerade ' . esc($currentGuild['name']) : 'Wähle oben rechts einen Server aus.' ?></p>
 
 <?php if (!$manageableGuilds): ?>
   <div class="card">
-    <h2>Kein verwaltbarer Server gefunden</h2>
-    <p>Du brauchst auf einem Server "Administrator" oder "Server verwalten", damit er hier auftaucht.</p>
+    <div class="empty-state">
+      <h2 style="justify-content:center;">Kein verwaltbarer Server gefunden</h2>
+      <p>Du brauchst auf einem Server "Administrator" oder "Server verwalten", damit er hier auftaucht.</p>
+    </div>
   </div>
 <?php elseif (!$botInGuild): ?>
   <div class="card">
-    <h2>EselModerator ist auf diesem Server noch nicht eingeladen</h2>
-    <p><a class="btn" href="<?= dashboardPageUrl('invite', ['guildId' => $guildId], false) ?>">Jetzt einladen →</a></p>
+    <div class="empty-state">
+      <h2 style="justify-content:center;">EselModerator ist hier noch nicht eingeladen</h2>
+      <p>Lade den Bot ein, um Module für diesen Server freizuschalten.</p>
+      <a class="btn" href="<?= dashboardPageUrl('invite', ['guildId' => $guildId], false) ?>">Jetzt einladen →</a>
+    </div>
   </div>
 <?php else: ?>
-  <div class="grid">
+  <?php
+    $activeCount = $modulesData ? count(array_filter($modulesData['modules'] ?? [])) : 0;
+    $totalCount = $modulesData ? count($modulesData['modules'] ?? []) : 0;
+    $tier = $premiumData['tier'] ?? 'free';
+    $tierLabel = ['free' => 'Kostenlos', 'basic' => 'Basic', 'pro' => 'Pro'][$tier] ?? $tier;
+  ?>
+  <div class="grid" style="margin-bottom:22px;">
     <div class="stat">
-      <div class="value"><?= $premiumData ? esc($premiumData['tier'] ?? 'free') : '–' ?></div>
-      <div class="label">Premium-Tier</div>
+      <div class="value"><?= $activeCount ?>/<?= $totalCount ?></div>
+      <div class="label">Aktive Module</div>
     </div>
     <div class="stat">
-      <div class="value"><?= $modulesData ? count(array_filter($modulesData['modules'] ?? [])) : 0 ?>/<?= $modulesData ? count($modulesData['modules'] ?? []) : 0 ?></div>
-      <div class="label">Aktive Module</div>
+      <div class="value"><?= esc($tierLabel) ?></div>
+      <div class="label">Premium-Tier <?= $tier === 'free' ? '· <a href="https://shop.eselbande.com" target="_blank" style="color:var(--accent-3);">Upgrade</a>' : '' ?></div>
+    </div>
+    <div class="stat">
+      <div class="value" style="color:var(--success);">✓</div>
+      <div class="label">Bot online auf diesem Server</div>
     </div>
   </div>
 
@@ -60,11 +81,15 @@ include __DIR__ . '/../includes/sidebar.php';
     <div class="grid">
       <?php foreach ($moduleHubLinks as $item): ?>
         <?php $active = $modulesData['modules'][$item['key']] ?? false; ?>
-        <a class="stat" style="text-decoration:none;color:inherit;display:block;" href="<?= dashboardPageUrl($item['page']) ?>">
-          <div class="value"><?= $item['icon'] ?></div>
-          <div class="label"><?= esc($item['label']) ?>
-            <span class="badge <?= $active ? 'on' : 'off' ?>"><?= $active ? 'An' : 'Aus' ?></span>
-          </div>
+        <a class="stat interactive" style="text-decoration:none;color:inherit;display:flex;gap:14px;align-items:flex-start;" href="<?= dashboardPageUrl($item['page']) ?>">
+          <span style="width:38px;height:38px;border-radius:11px;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;">
+            <?= __navIcon($item['icon']) ?>
+          </span>
+          <span>
+            <span style="display:block;font-weight:700;color:#fff;font-size:.94rem;"><?= esc($item['label']) ?></span>
+            <span style="display:block;color:var(--text-tertiary);font-size:.78rem;margin-top:2px;"><?= esc($item['desc']) ?></span>
+            <span class="badge <?= $active ? 'on' : 'off' ?>" style="margin-top:8px;"><?= $active ? 'Aktiv' : 'Inaktiv' ?></span>
+          </span>
         </a>
       <?php endforeach; ?>
     </div>
