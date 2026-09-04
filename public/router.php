@@ -16,6 +16,11 @@ if ($path === '/logout.php') {
     return true;
 }
 
+if ($path === '/api-download.php') {
+    require __DIR__ . '/api-download.php';
+    return true;
+}
+
 if (preg_match('#^/pages/([a-z0-9\-]+)\.php$#', $path, $m)) {
     $file = __DIR__ . '/pages/' . $m[1] . '.php';
     if (is_file($file)) {
