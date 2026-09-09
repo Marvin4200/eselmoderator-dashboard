@@ -51,4 +51,7 @@ $__initial = $__user ? strtoupper(mb_substr($__user['username'] ?? '?', 0, 1)) :
     <?php endif; ?>
   </div>
 </header>
+<a href="https://eselbande.com/blog/eselbande-bot-zusammenfuehrung/" target="_blank" rel="noopener" style="display:block; text-align:center; background:linear-gradient(135deg, rgba(129,140,248,0.18), rgba(240,147,251,0.14)); border-bottom:1px solid rgba(129,140,248,0.3); color:#e2e8f0; font-size:0.85rem; padding:8px 16px; text-decoration:none;">
+  🚧 EselModerator wächst gerade mit EselMusic und Eselbuilder zu einem einzigen Bot (EselBande) zusammen — aktuell im Testbetrieb, hier ändert sich für dich noch nichts. Mehr erfahren →
+</a>
 <div class="layout">
